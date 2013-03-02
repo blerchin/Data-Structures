@@ -1,0 +1,48 @@
+DBG	debug.cpp	/^void DBG( const char* id, const char* msg, int lvl/
+DEBUG_E	debug.h	8
+DEBUG_H	debug.h	2
+DEBUG_LVL	debug.h	11
+DEBUG_S	debug.h	7
+DEBUG_V	debug.h	9
+Mop-test.cpp	op-test.cpp	/^int main(){$/
+Mstack-test.cpp	stack-test.cpp	/^int main(int argc, char *argv[]) {$/
+Node	Stack.h	6
+Node::Data	Stack.cpp	/^list_item& Node::Data(){$/
+Node::Link	Stack.cpp	/^Node*& Node::Link(){	$/
+Node::Node	Stack.cpp	/^Node::Node(){$/
+Node::Node	Stack.cpp	/^Node::Node( const list_item& new_data, Node* new_l/
+Node::data	Stack.h	19
+Node::link	Stack.h	20
+OP_CODE_ADD	operator.h	6
+OP_CODE_COS	operator.h	12
+OP_CODE_DIV	operator.h	9
+OP_CODE_ERR	operator.h	5
+OP_CODE_MUL	operator.h	8
+OP_CODE_SIN	operator.h	13
+OP_CODE_SUB	operator.h	7
+OP_CODE_TAN	operator.h	11
+OP_CODE_UNM	operator.h	10
+STACK_H	Stack.h	2
+Stack	Stack.h	23
+Stack.o	Makefile	/^Stack.o: Stack.h Stack.cpp$/
+Stack::Stack	Stack.cpp	/^Stack::Stack(){$/
+Stack::Stack	Stack.cpp	/^Stack::Stack( const Stack& source ){$/
+Stack::empty	Stack.cpp	/^bool Stack::empty() const {$/
+Stack::head	Stack.h	46
+Stack::num_elements	Stack.h	47
+Stack::operator=	Stack.cpp	/^Stack& Stack::operator=( const Stack& rhs ){$/
+Stack::pop	Stack.cpp	/^void Stack::pop(){$/
+Stack::push	Stack.cpp	/^void Stack::push( const list_item& new_data ) {$/
+Stack::size	Stack.cpp	/^unsigned int Stack::size() const{$/
+Stack::top	Stack.cpp	/^list_item& Stack::top() const{$/
+Stack::~Stack	Stack.cpp	/^Stack::~Stack(){$/
+clean	Makefile	/^clean:$/
+debug.o	Makefile	/^debug.o: debug.h debug.cpp$/
+list_item	Stack.h	5
+op-test	Makefile	/^op-test: op-test.o operator.o debug.o$/
+op-test.o	Makefile	/^op-test.o: operator.cpp operator.h debug.o$/
+op_code	operator.h	3
+operator.o	Makefile	/^operator.o: operator.h operator.cpp$/
+parse_operator	operator.cpp	/^parse_operator($/
+pbv	stack-test.cpp	/^void pbv(Stack s) {$/
+std	debug.h	13

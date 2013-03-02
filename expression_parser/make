@@ -1,0 +1,158 @@
+/** Expression parser 
+		modified: Ben Lerchin - 2/11/13
+**/
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
+#include <sstream>
+
+#include "operator.h"
+#include "Stack.h"
+#include "debug.h"
+
+#define NUL '\0'
+
+#define PARSER_STATUS_GOOD 0
+#define PARSER_STATUS_SYNTAX 1
+#define PARSER_STATUS_FATAL 2
+	
+#define MAX_OP_LENGTH 3
+
+/* Define global constants & variables */
+
+/* initialize a char string with the length of the biggest operator */
+const static int op_str_max = MAX_OP_LENGTH;
+char op_str [op_str_max+1];
+int op_str_len = 0;
+
+
+op_status status = 0;	
+bool check_unm = 1;
+
+/** Take a string (hopefully) containing an operator and either
+		push it to the stack or eval it depending on precedence.
+**/
+int handle_op ( char* op_str,
+								double new_num, 
+								Stack* op_stack, 
+								Stack* num_stack)
+{
+
+	cout << "Handling operator '" << op_str << "'." << endl;
+	op_code new_op = -1;
+
+	if (0 == op_str_len){
+
+		num_stack -> push (new_num);
+	}
+	else if (!num_stack -> empty() )
+	{
+		new_op = parse_operator (op_str, op_str_len, check_unm);
+		cout << "Operator code is: " << new_op << endl;
+		op_str_len = 0;
+		op_str[op_str_len]=NUL;
+	
+		if (new_op == OP_CODE_ERR)
+		{
+			cerr << "Syntax Error: '" << op_str << "' is not an operator." << endl;
+			return PARSER_STATUS_SYNTAX;
+		}
+		else
+		{
+			cout << "Precedence is: " << compare_prec (new_op,
+							op_stack -> top() ) << endl;
+				
+			if (compare_prec (new_op, op_stack -> top()) )
+			{
+			num_stack -> pop();
+			double result = perform_op (num_stack -> top(),
+																	new_num,
+																	new_op,
+																	status );
+			cout << "Result is: " << result << endl;
+
+			cout << "pushing number " << result << " to stack" << endl;
+			num_stack -> push (result);
+			}
+			else
+			{
+			op_stack -> push (new_op);
+			}
+		}
+	}
+	else 
+	{
+		cout << "Syntax Error: Nothing preceding binary operator "
+					<< op_str << endl;
+		return PARSER_STATUS_SYNTAX;
+	}
+	return PARSER_STATUS_GOOD;
+}
+
+int main( int argc, char* argv[] ) {
+	const char* me = "parser"; 
+	Stack* op_stack = new Stack();
+	op_stack -> push (OP_CODE_END);
+	Stack* num_stack = new Stack();
+
+	op_str[op_str_len] = NUL;
+
+
+
+	while(1){
+
+		double new_num = 0;
+
+/* Doing things a bit out of order to maintain iostream >> behavior.
+*/
+		if (cin.peek() != '-' && cin.peek() != '+' && cin >> new_num)
+		{
+			cout << "Found number '" << new_num << "' " <<endl;
+
+/* handle_op() will just put the number on the stack if op is '' */
+			status = handle_op (op_str, new_num, op_stack, num_stack);
+			
+		} 
+		else
+		{
+			char temp;
+/* Get a single char off the input stream */
+			cin.get(temp);
+
+			if ( temp != ' ')
+			{
+				if (op_str_len < op_str_max)
+				{
+
+/* Push operator tokens out to string, to be flushed when 
+	 we hit next number.
+*/
+					op_str [op_str_len] = temp;
+					op_str_len++;
+					op_str [op_str_len] = NUL;
+
+					cout << "Found operator token '" << op_str << "' " << endl;
+				}
+				else
+					cerr << "Operator '" << op_str << "...' is longer than max "
+																			"allowed " << op_str_max << "chars.";
+			}
+			else if (temp != '\n')
+				{
+					cout << num_stack -> top();
+					/*
+						 restart_expression();
+					*/
+				}
+		}
+
+/* Break out of the loop and end execution if there is a fatal error. 
+*/
+		if(status ==PARSER_STATUS_FATAL)
+			break;
+	}
+}
+
+
