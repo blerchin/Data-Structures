@@ -5,6 +5,10 @@ using namespace std;
 #define DEBUG 1
 
 #define NEWLINE '\n'
+// you never know when you're gonna have to chnage these guys...
+#define ZERO '0'
+#define ONE '1'
+#define BYTE_SIZE 8 
 
 class Bitstream { 
 	private: 
@@ -29,8 +33,8 @@ class Bitstream {
 		void getint(int &n, int b, ifstream &file_in);   
 		// writes 1 and 0 chars to cout if DEBUG is true,
 		// otherwise a byte to file
-		void write_byte(const unsigned char byte, ofstream &file_out);
+		void write_byte(const unsigned char byte, ostream &out);
 		// reads 8x ascii chars 1 or 0 from cin if DEBUG is true,
 		// otherwise reads a byte from file (wrapper for .get() )
-		void read_byte(char byte, ifstream &file_in);
+		void read_byte(unsigned char &byte, istream &in);
 };

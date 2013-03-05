@@ -10,23 +10,44 @@ Bitstream::~Bitstream() {
 
 // writes byte as 1 and 0 chars to cout if DEBUG is true,
 // otherwise a byte to file
-void Bitstream::write_byte(const unsigned char byte, ofstream &file_out){
+void Bitstream::write_byte(const unsigned char byte, ostream &out){
 	if(DEBUG){
 		unsigned char b = byte;
-		unsigned char mask = 1 << 6;
-		for(char i=0; i<7; i++){
-			cout << ((b & mask) == mask);
-			b = b << 1;
+		unsigned char mask = 1 << 7;
+		for(char i=0; i<BYTE_SIZE; i++){
+			if((b & mask) == mask){
+				out.put(ONE);
+			}else{
+				out.put(ZERO);
+			}
+			//if(i < (BYTE_SIZE-1) ) 
+				b = b << 1;
 		}
-		cout << NEWLINE;
 	} else {
-		file_out.put(byte);
+		out.put(byte);
 	}
 }
 
 // reads 8x ascii chars 1 or 0 from cin if DEBUG is true,
 // otherwise reads a byte from file (wrapper for .get() )
-void Bitstream::read_byte(char byte, ifstream &file_in){
+void Bitstream::read_byte(unsigned char& byte, istream &in){
+	unsigned char bit = 0;
+	byte = 0;
+	unsigned char mask_zero = 127 << 1;
+	if(DEBUG){
+			for(int i; i<BYTE_SIZE;	i++){
+				char to_parse = in.get();
+				if( to_parse == ZERO ){
+					byte = mask_zero & byte;
+				} else {
+					byte = 1 | byte;
+				}
+				if(i<7)	byte = byte << 1;
+			}
+	} else {
+		byte = in.get();
+	}
+
 }
 
 // write out last bytebuffer. 
