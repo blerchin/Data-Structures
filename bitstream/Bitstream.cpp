@@ -96,6 +96,7 @@ bool Bitstream::getbit(int &b, ifstream &file_in){
 }
 // Puts integer n in b-bit representation into file_out
 void Bitstream::putint(int n, int b, ofstream &file_out){
+	assert( n <= pow(2, b));
 	for(int i=0; i<b; i++) {
 		int mask = mask_one << (b-1);
 		int bit = (mask  == ((unsigned int) n & mask ));

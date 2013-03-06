@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
+#include <cmath>
 using namespace std; 
 
 #define DEBUG 0
