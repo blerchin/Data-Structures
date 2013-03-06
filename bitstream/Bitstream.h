@@ -1,8 +1,9 @@
 #include <fstream>
 #include <iostream>
+#include <cassert>
 using namespace std; 
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define NEWLINE '\n'
 // you never know when you're gonna have to chnage these guys...
@@ -12,8 +13,11 @@ using namespace std;
 
 class Bitstream { 
 	private: 
-		unsigned char bytebuffer;
+		unsigned char ibytebuffer, obytebuffer;
 		int obitpos, ibitpos;
+		unsigned char mask_zero; 
+		unsigned char mask_one;
+		unsigned char mask_prefix;
 
 	public:
 		// Sets bit position to zero.

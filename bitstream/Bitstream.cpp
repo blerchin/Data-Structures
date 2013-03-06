@@ -4,11 +4,14 @@
 Bitstream::Bitstream() {
 	obitpos = 0;
 	ibitpos = 0;
+	mask_zero = 127 <<1;
+	mask_one = 1;
+	mask_prefix = 1 << 7;
 }
 Bitstream::~Bitstream() {
 }
 
-// writes byte as 1 and 0 chars to cout if DEBUG is true,
+// writes byte as 1 and 0 chars to ostream if DEBUG is true,
 // otherwise a byte to file
 void Bitstream::write_byte(const unsigned char byte, ostream &out){
 	if(DEBUG){
@@ -33,9 +36,8 @@ void Bitstream::write_byte(const unsigned char byte, ostream &out){
 void Bitstream::read_byte(unsigned char& byte, istream &in){
 	unsigned char bit = 0;
 	byte = 0;
-	unsigned char mask_zero = 127 << 1;
 	if(DEBUG){
-			for(int i; i<BYTE_SIZE;	i++){
+			for(int i=0; i<BYTE_SIZE;	i++){
 				char to_parse = in.get();
 				if( to_parse == ZERO ){
 					byte = mask_zero & byte;
@@ -52,18 +54,63 @@ void Bitstream::read_byte(unsigned char& byte, istream &in){
 
 // write out last bytebuffer. 
 void Bitstream::flush(ofstream &file_out){
-
+	obitpos = 0;
+	write_byte(obytebuffer, file_out);
 }
 // Puts binary 0 or 1 into the destination file.
 void Bitstream::putbit (int c, ofstream &file_out){     
+	obytebuffer = obytebuffer << 1;
+	if(0 == c){
+		obytebuffer = mask_zero & obytebuffer;
+	} else {
+		obytebuffer = mask_one | obytebuffer;
+	}
+	obitpos++;
+	if(BYTE_SIZE == obitpos){
+		flush(file_out);
+	}
 }
 // Gets next bit from the input file, places it in the first argument.
 bool Bitstream::getbit(int &b, ifstream &file_in){
+		if(0 == ibitpos){
+			read_byte(ibytebuffer, file_in);
+			ibitpos = 1;
+		}	else if ((BYTE_SIZE-1) == ibitpos){
+			ibitpos = 0;
+			ibytebuffer = ibytebuffer << 1;
+		} else {
+			ibitpos++;
+			ibytebuffer = ibytebuffer << 1;
+		}
+	if(!file_in.eof() ) {
+		if(mask_prefix == (ibytebuffer & mask_prefix) ) {
+			b = 1;
+		}else{
+			b = 0;
+		}
+		return true;
+
+	} else {
+		return false;
+	}
 }
 // Puts integer n in b-bit representation into file_out
 void Bitstream::putint(int n, int b, ofstream &file_out){
+	for(int i=0; i<b; i++) {
+		int mask = mask_one << (b-1);
+		int bit = (mask  == ((unsigned int) n & mask ));
+		putbit(bit , file_out);
+		n = n << 1;
+	}
 }
 // Gets integer n in b-bit representation from
 // file_in
 void Bitstream::getint(int &n, int b, ifstream &file_in){
+	int bit = 0;
+	n = 0;
+	for(int i=0; i<b; i++){
+		getbit(bit,file_in);
+		if(0 < bit)	n = n | mask_one;
+		if((b-1)>i) n = n << 1;
+	}
 }
