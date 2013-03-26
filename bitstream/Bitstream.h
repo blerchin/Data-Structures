@@ -4,7 +4,7 @@
 #include <cmath>
 using namespace std; 
 
-#define DEBUG 0
+#define DEBUG 1
 
 #define NEWLINE '\n'
 // you never know when you're gonna have to chnage these guys...

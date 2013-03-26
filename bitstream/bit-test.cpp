@@ -134,6 +134,7 @@ int menu( ){
 					cin.ignore();
 				}
 				cout << "Closing file." << endl;
+				b -> flush(*out);
 				out -> close();
 				break;
 			}

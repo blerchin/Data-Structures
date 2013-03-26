@@ -54,8 +54,9 @@ void Bitstream::read_byte(unsigned char& byte, istream &in){
 
 // write out last bytebuffer. 
 void Bitstream::flush(ofstream &file_out){
-	obitpos = 0;
+	obytebuffer <<= (BYTE_SIZE - obitpos);
 	write_byte(obytebuffer, file_out);
+	obitpos = 0;
 }
 // Puts binary 0 or 1 into the destination file.
 void Bitstream::putbit (int c, ofstream &file_out){     
@@ -65,8 +66,7 @@ void Bitstream::putbit (int c, ofstream &file_out){
 	} else {
 		obytebuffer = mask_one | obytebuffer;
 	}
-	obitpos++;
-	if(BYTE_SIZE == obitpos){
+	if((BYTE_SIZE) == ++obitpos){
 		flush(file_out);
 	}
 }
@@ -96,10 +96,12 @@ bool Bitstream::getbit(int &b, ifstream &file_in){
 }
 // Puts integer n in b-bit representation into file_out
 void Bitstream::putint(int n, int b, ofstream &file_out){
-	assert( n <= pow(2, b));
+	//assert( n <= pow(2, b));
+	cout << "Bit rep is: " << b << endl;
 	for(int i=0; i<b; i++) {
 		int mask = mask_one << (b-1);
 		int bit = (mask  == ((unsigned int) n & mask ));
+		cout << "Putting bit " << bit << endl;
 		putbit(bit , file_out);
 		n = n << 1;
 	}
